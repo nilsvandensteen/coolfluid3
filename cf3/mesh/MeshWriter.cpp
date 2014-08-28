@@ -101,6 +101,16 @@ MeshWriter::MeshWriter ( const std::string& name  ) :
       .mark_basic()
       .link_to(&m_region_filter  .enable_interior_faces)
       .link_to(&m_entities_filter.enable_interior_faces);
+
+  // Option to enable lines
+  m_region_filter  .enable_lines = false; // default value
+  m_entities_filter.enable_lines = false; // default value
+  options().add("enable_lines", m_region_filter.enable_interior_faces)
+      .pretty_name("Enable Lines")
+      .description("Includes lines in mesh")
+      .mark_basic()
+      .link_to(&m_region_filter  .enable_lines)
+      .link_to(&m_entities_filter.enable_lines);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -165,7 +175,19 @@ void MeshWriter::execute()
   m_filtered_entities.clear();
   boost_foreach(const Handle<Region const>& region, m_regions)
     boost_foreach(const Entities& entities, find_components_recursively_with_filter<Entities>(*region,m_entities_filter))
+//    boost_foreach(const Entities& entities, find_components_recursively<Entities>(*region))
+  {
       m_filtered_entities.push_back(entities.handle<Entities>());
+//      CFinfo << "No filter: " << entities.name() << "\n";
+  }
+//  CFinfo << "----------------------------\n";
+//  boost_foreach(const Handle<Region const>& region, m_regions)
+//    boost_foreach(const Entities& entities, find_components_recursively_with_filter<Entities>(*region,m_entities_filter))
+//    boost_foreach(const Entities& entities, find_components_recursively<Entities>(*region))
+//  {
+//      m_filtered_entities.push_back(entities.handle<Entities>());
+//      CFinfo << "With filter: " << entities.name() << "\n";
+//  }
 
   // Call implementation
   write();
@@ -199,6 +221,11 @@ bool MeshWriter::RegionFilter::operator()(const Component& component)
   if (enable_interior_faces)
     cnt += common::count(common::find_components<CellFaces>(component));
 
+  // enable lines
+  if (enable_lines){
+    cnt += common::count(common::find_components<Elements>(component));
+    }
+
   return (cnt>0);
 }
 
@@ -216,6 +243,10 @@ bool MeshWriter::EntitiesFilter::operator()(const Component& component)
 
   // enable surfaces
   if (component.handle<Faces>() && enable_surfaces)
+    return true;
+
+  // enable lines
+  if (component.handle<Elements>() && enable_lines)
     return true;
 
   return false;

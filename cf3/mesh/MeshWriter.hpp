@@ -69,6 +69,7 @@ private:
     bool enable_interior_faces;
     bool enable_interior_cells;
     bool enable_surfaces;
+    bool enable_lines;
     bool operator()(const Component& component);
   };
 
@@ -77,6 +78,7 @@ private:
     bool enable_interior_faces;
     bool enable_interior_cells;
     bool enable_surfaces;
+    bool enable_lines;
     bool operator()(const Component& component);
   };
 
