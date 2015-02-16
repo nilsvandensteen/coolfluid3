@@ -304,13 +304,20 @@ void Writer::write_connectivity(std::fstream& file)
         {
           file << " " << -(part+1);
         }
-        boost_foreach(const Uint node, nodes)
-        {
-          file << " " << node;
-        }
+        if(elm_type==15)
+          {
+            file << " " << nodes[0];
+          }
+        else
+          {
+            boost_foreach(const Uint node, nodes)
+            {
+              file << " " << node;
+            }
+          }
         file << "\n";
+        }
       }
-    }
     ++elementary_entity_index;
   }
   file << "$EndElements\n";
