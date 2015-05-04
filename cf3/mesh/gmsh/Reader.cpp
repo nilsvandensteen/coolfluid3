@@ -987,6 +987,10 @@ void Reader::read_variable_header(std::map<std::string,Field>& fields)
     if (nb_integer_tags >= 3)
     {
       m_file >> field_time_step >> var_type >> nb_entries;
+      for (Uint i=3; i<nb_integer_tags; ++i)
+        {
+          m_file >> dummy;
+        }
     }
     if (nb_integer_tags < 3)
       throw ParsingFailed(FromHere(),"Data must have 3 integer tags (time_step, variable_type, nb_entries)");
